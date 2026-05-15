@@ -1,0 +1,174 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -176,
+        0
+      ],
+      "id": "f16565df-2516-433d-bd55-984ddda5014c",
+      "name": "When chat message received",
+      "webhookId": "761f8305-ab75-491b-9dbb-180dec2b76e8"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a Senior Automation Engineer at Cosuno. Your specialty is analyzing construction tender documents. When a user provides text about a project, extract the project name, estimated budget, and location. Respond in a professional, structured manner,Always respond in a simple JSON format like this: {\"name\": \"...\", \"budget\": \"...\", \"location\": \"...\"}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        48,
+        -16
+      ],
+      "id": "e9ef1719-5a4b-481f-b764-a098702b0470",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        48,
+        224
+      ],
+      "id": "baf5ba00-84a7-4e51-a122-3e69d4d5c931",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "aRy6bj0hqg2ZABGO",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1QR0c5JbgJFIBTUXOsluq48nDVZHEqUcREpnrYoeaoLQ/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tabellenblatt1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QR0c5JbgJFIBTUXOsluq48nDVZHEqUcREpnrYoeaoLQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Project Name": "={{ JSON.parse($json.output).name }}",
+            "Budget": "={{ JSON.parse($json.output).budget }}",
+            "Location": "={{ JSON.parse($json.output).location }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Project Name",
+              "displayName": "Project Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        400,
+        -16
+      ],
+      "id": "da7fd25a-f188-43be-8ac5-f5d56f8b93ff",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jiYguDegEtWBI32j",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f8d7eb0e-f8ac-4983-8d1e-fd545d2634f0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "381100c1d174478e64a65c5bab85c1adc7e1a673915b25309941d644a57b4f47"
+  },
+  "id": "L3FiQizEdxhF7qZe",
+  "tags": []
+}
